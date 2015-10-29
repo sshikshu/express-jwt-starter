@@ -1,14 +1,16 @@
 'use strict';
 import * as bcrypt from 'bcrypt';
-import * as mongoose from 'mongoose';
 import {Promise} from 'es6-promise';
+import * as mongoose from 'mongoose';
+import * as nodemailer from 'nodemailer';
 
 import {UserModel} from './mongoose';
-import {IUserData, IUserDocument, IUserIdentity} from '../interfaces';
+import {IValidationObject, IUserData, IUserDocument, IUserIdentity} from '../interfaces';
 
-import {HttpError, UnauthorizedError} from '../../common/errors/http';
+import {BadRequestError, HttpError, UnauthorizedError} from '../../common/errors/http';
+import * as constants from '../../common/constants';
 import {IPromiseReject, IPromiseResolve} from '../../common/interfaces';
-
+import {createVerificationEmail} from '../../common/templates/email';
 
 export class User {
 
@@ -55,7 +57,7 @@ export class User {
     });
   }
 
-  private static findUser(userIdentity: IUserIdentity): Promise<User> {
+  public static findUser(userIdentity: IUserIdentity): Promise<User> {
     return new Promise<User>((resolve: IPromiseResolve<User>, reject: IPromiseReject) => {
       let mongoPromise: mongoose.Promise<IUserDocument>;
       if (userIdentity._id) {
@@ -101,6 +103,50 @@ export class User {
     });
   }
 
+  public sendValidationEmail(): Promise<nodemailer.SentMessageInfo> {
+    let transporter = nodemailer.createTransport({
+      service: constants.smtp.preset,
+      auth: {
+        user: constants.smtp.id,
+        pass: constants.smtp.password
+      },
+    });
+
+    var mailOptions = {
+      from:constants.smtp.id,
+      to: this.email,
+      subject: 'it is the time to register',
+      html: createVerificationEmail(this.id, this.name, this.nickname, this._document.validation.email.sent),
+    };
+
+    return new Promise<nodemailer.SentMessageInfo>((resolve: IPromiseResolve<nodemailer.SentMessageInfo>, reject: IPromiseReject) => {
+      transporter.sendMail(mailOptions, (err: Error, info: any) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(info);
+      });
+    });
+  }
+
+  public validateMedium(token: string, medium: string): Promise<User> {
+    return new Promise<User>((resolve: IPromiseResolve<User>, reject: IPromiseReject) => {
+      if (this._document.validation && this._document.validation[medium] && this._document.validation[medium].sent) {
+        if (this._document.validation[medium].sent === token) {
+          resolve(this);
+        }
+        return reject(new BadRequestError('Invalid token'));
+      }
+      return reject(new Error(`Token for ${medium} not present`));
+    });
+  }
+
+  public isMediumValidated(medium: string): boolean {
+    if (this._document.validation && this._document.validation[medium] && this._document.validation[medium].received && this._document.validation[medium].sent) {
+      return this._document.validation[medium].received === this._document.validation[medium].sent;
+    }
+  }
+
   constructor(user: IUserData | IUserDocument) {
     this._document = new UserModel(user);
   }
@@ -127,5 +173,9 @@ export class User {
 
   get password(): string {
     return this._document.password;
+  }
+
+  get validation(): IValidationObject {
+    return this._document.validation;
   }
 }

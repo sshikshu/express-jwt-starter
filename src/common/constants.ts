@@ -1,4 +1,5 @@
 'use strict';
+
 export namespace mongo {
   export const host: string = 'localhost';
   export const port: number = 27017;
@@ -10,6 +11,12 @@ export namespace mongo {
 export namespace redis {
   export const host: string = 'localhost';
   export const port: number = 6379;
+}
+
+export namespace smtp {
+  export const preset: string = 'Gmail';
+  export const id: string = 'id@gmail.com';
+  export const password: string = 'password';
 }
 
 export namespace webtoken {

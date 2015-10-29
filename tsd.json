@@ -9,7 +9,7 @@
       "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
     },
     "node/node.d.ts": {
-      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
     },
     "serve-static/serve-static.d.ts": {
       "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
@@ -90,6 +90,18 @@
       "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
     },
     "es6-promise/es6-promise.d.ts": {
+      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+    },
+    "nodemailer/nodemailer.d.ts": {
+      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+    },
+    "nodemailer-direct-transport/nodemailer-direct-transport.d.ts": {
+      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+    },
+    "nodemailer-smtp-transport/nodemailer-smtp-transport.d.ts": {
+      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+    },
+    "nodemailer/nodemailer-types.d.ts": {
       "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
     }
   }

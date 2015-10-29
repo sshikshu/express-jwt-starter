@@ -14,7 +14,18 @@ export interface IUserData {
   name: string;
   nickname: string;
   password: string;
+  validation?: IValidationObject
 }
+
+export interface IValidationObject {
+  email: IValidationData
+}
+
+export interface IValidationData {
+  sent: string,
+  received: string
+}
+
 
 export interface IUserDocument extends IUserData, mongoose.Document { }
 

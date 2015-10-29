@@ -29,7 +29,7 @@ app.use(function(err: IHttpError, req: express.Request, res: express.Response, n
       case 'MongoError':
         return res.status(422).json({ name: err.name, message: err.message, });
       default:
-        return res.status(500).json({ name: err.name, message: err.message, });
+        return res.status(500).json({ name: err.name, message: err.message, stack: err.stack });
     }
   }
 });
