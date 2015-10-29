@@ -5,6 +5,7 @@ import * as nodemailer from 'nodemailer';
 import {User} from './models';
 import {IUserData} from './interfaces';
 
+import {IWebToken} from '../common/interfaces';
 import {jwtCheck} from '../Token/verify';
 
 
@@ -33,7 +34,8 @@ export function setup(router: express.Router): void {
   });
 
   router.post('/verify/email/send', jwtCheck, (req: express.Request, res: express.Response, next: Function): void => {
-    User.findUser({ _id: req.user._id }).then((user: User) => { return user.sendValidationEmail(); })
+    let token: IWebToken = req.user;
+    User.findUser({ _id: token.id }).then((user: User) => { return user.sendValidationEmail(); })
       .then((info: nodemailer.SentMessageInfo) => { res.status(200).json({ payload: info }); })
       .catch((err: Error): void => { next(err); });
   });
@@ -57,13 +59,15 @@ export function setup(router: express.Router): void {
   });
 
   router.patch('/', jwtCheck, (req: express.Request, res: express.Response, next: Function): void => {
-    User.updateItem(req.user._id, readUserData(req.body))
+    let token: IWebToken = req.user;
+    User.updateItem(token.id, readUserData(req.body))
       .then((user: User): void => { res.status(200).json({ payload: user }); })
       .catch((err: Error): void => { next(err); });
   });
 
   router.delete('/', jwtCheck, (req: express.Request, res: express.Response, next: Function): void => {
-    User.deleteItem(req.user._id)
+    let token: IWebToken = req.user;
+    User.deleteItem(token.id)
       .then((user: User): void => { res.status(200).json({ payload: user }); })
       .catch((err: Error): void => { next(err); });
   });

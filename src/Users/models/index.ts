@@ -113,7 +113,7 @@ export class User {
     });
 
     var mailOptions = {
-      from:constants.smtp.id,
+      from: constants.smtp.id,
       to: this.email,
       subject: 'it is the time to register',
       html: createVerificationEmail(this.id, this.name, this.nickname, this._document.validation.email.sent),
@@ -177,5 +177,14 @@ export class User {
 
   get validation(): IValidationObject {
     return this._document.validation;
+  }
+
+  get isValidated(): boolean {
+    for (let medium in this.validation) {
+      if (medium.sent === medium.received) {
+        return true;
+      }
+    }
+    return false;
   }
 }

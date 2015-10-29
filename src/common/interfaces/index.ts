@@ -14,6 +14,12 @@ export interface IPromiseReject {
   (err: Error): void;
 }
 
+export interface IPartialToken {
+  id: string,
+  jti: string,
+  isValidated: boolean,
+}
+
 export interface IJsonWebToken {
   iss: string;
   sub?: string;
@@ -24,4 +30,4 @@ export interface IJsonWebToken {
   jti: string;
 }
 
-export interface IWebToken extends IJsonWebToken { _id: string; }
+export interface IWebToken extends IJsonWebToken { id: string; isValidated: boolean; }

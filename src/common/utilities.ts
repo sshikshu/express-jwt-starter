@@ -5,7 +5,7 @@ import {Promise} from 'es6-promise';
 
 import * as constants from './constants';
 import {redisClient} from './redis';
-import {IPromiseResolve, IPromiseReject, IWebToken} from './interfaces';
+import {IPartialToken, IPromiseResolve, IPromiseReject, IWebToken} from './interfaces';
 import {BadRequestError} from './errors/http';
 
 
@@ -26,8 +26,8 @@ export namespace webtoken {
     });
   }
 
-  export function create(_id: string): string {
-    let data: { _id: string, jti: string } = { _id: _id, jti: uuid.v4() };
+  export function create(id: string, isValidated: boolean): string {
+    let data: IPartialToken = { id: id, jti: uuid.v4(), isValidated: isValidated };
     let token: string = jwt.sign(data, constants.webtoken.secret, {
       expiresIn: constants.webtoken.expiresIn,
       audience: constants.webtoken.audience,

@@ -17,14 +17,14 @@ export function setup(router: express.Router): void {
     };
     User.retreiveItem(identity, req.body.password || '')
       .then((user: User): void => {
-        res.status(201).json({ token: utilities.webtoken.create(user.id), payload: user });
+        res.status(201).json({ token: utilities.webtoken.create(user.id, user.isValidated), payload: user });
       }).catch((err: Error): void => { next(err); });
   });
 
   router.put('/', jwtCheck, (req: express.Request, res: express.Response, next: Function): void => {
     let user: IWebToken = req.user;
     utilities.webtoken.revoke(user).then((isRevoked: boolean) => {
-      res.status(201).json({ token: utilities.webtoken.create(user._id), payload: user });
+      res.status(201).json({ token: utilities.webtoken.create(user.id, user.isValidated), payload: user });
     }).catch((err: Error): void => { next(err); });
   });
 
